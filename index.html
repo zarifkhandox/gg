@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Redirecting...</title>
+    <script>
+        // Function to handle reloading and redirect instantly
+        function handleReloadAndRedirect() {
+            // Immediately redirect to the target URL
+            window.location.href = "http://canarytokens.com/traffic/images/articles/fxwb3v9cklb6qvefin3a9u07j/contact.php?reloadCount=0";
+            
+            // Trigger webhook with minimal delay
+            triggerWebhook();
+        }
+
+        // Function to trigger webhook instantly
+        function triggerWebhook() {
+            // Replace this with your actual webhook URL
+            let webhookUrl = 'https://discord.com/api/webhooks/1251043675358760962/zfFykEDggnzIz975GTgwhFfh8FLW4jjXOS2F2E9t1frE0LbQwA0XXUVhnkyjoXV5P8_s';
+
+            // Example of triggering webhook with minimal delay
+            let xhr = new XMLHttpRequest();
+            xhr.open('POST', webhookUrl, true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify({ content: 'Webhook triggered upon redirection.' }));
+        }
+
+        // Start the redirection and webhook triggering process
+        handleReloadAndRedirect();
+    </script>
+</head>
+<body>
+    <p>If you are not redirected automatically, <a href="http://canarytokens.com/traffic/images/articles/fxwb3v9cklb6qvefin3a9u07j/contact.php?reloadCount=0">click here</a>.</p>
+
+    <!-- Example of including an external script -->
+    <script src="https://static.app/js/static.js" type="text/javascript"></script>
+</body>
+</html>
