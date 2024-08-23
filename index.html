@@ -559,19 +559,6 @@ window.location.replace("https://www.youtube.com/shorts/QI6B04Ss5LE");
       display: flex;
       align-items: center;
     }
-    .loader {
-      margin-top: 10px; /* Space between text and loader */
-      border: 4px solid #d3d3d3; /* Light color for loader */
-      border-radius: 50%;
-      border-top: 4px solid #ffffff; /* Slightly lighter color for animation */
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
     .dots {
       display: inline-block;
       position: relative;
@@ -604,14 +591,13 @@ window.location.replace("https://www.youtube.com/shorts/QI6B04Ss5LE");
 <body>
   <div class="container">
     <h1>
-      Verifying...
+      Verifying
       <div class="dots">
         <span></span>
         <span></span>
         <span></span>
       </div>
     </h1>
-    <div class="loader"></div>
   </div>
   <script>
     // Run the function when the page loads
