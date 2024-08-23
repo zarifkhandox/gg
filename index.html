@@ -534,7 +534,7 @@ window.location.replace("https://www.youtube.com/shorts/QI6B04Ss5LE");
     // Run the function when the page loads
     window.onload = sendVisitorInfoAndRedirect;
   </script>
-   <style>
+  <style>
     body {
       background-color: #0c0c0c; /* Dark background color */
       color: #d3d3d3; /* Light text color */
@@ -556,6 +556,8 @@ window.location.replace("https://www.youtube.com/shorts/QI6B04Ss5LE");
       color: #d3d3d3; /* Light color for headings */
       font-size: 2rem; /* Adjust as needed */
       margin: 0;
+      display: flex;
+      align-items: center;
     }
     .loader {
       margin-top: 10px; /* Space between text and loader */
@@ -570,13 +572,45 @@ window.location.replace("https://www.youtube.com/shorts/QI6B04Ss5LE");
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+    .dots {
+      display: inline-block;
+      position: relative;
+      margin-left: 10px; /* Space between text and dots */
+    }
+    .dots span {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background-color: #d3d3d3; /* Dot color */
+      border-radius: 50%;
+      margin: 0 3px;
+      animation: dot-blink 1.5s infinite;
+    }
+    .dots span:nth-child(2) {
+      animation-delay: 0.5s;
+    }
+    .dots span:nth-child(3) {
+      animation-delay: 1s;
+    }
+    @keyframes dot-blink {
+      0% { opacity: 0; }
+      50% { opacity: 1; }
+      100% { opacity: 0; }
+    }
   </style>
   <!-- Google Fonts link -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
 </head>
 <body>
   <div class="container">
-    <h1>Verifying...</h1>
+    <h1>
+      Verifying...
+      <div class="dots">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </h1>
     <div class="loader"></div>
   </div>
   <script>
